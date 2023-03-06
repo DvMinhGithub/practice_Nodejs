@@ -1,4 +1,4 @@
-// services
+
 const productService = require('../services/productService')
 
 module.exports = {
@@ -12,13 +12,18 @@ module.exports = {
     try {
       const { name, color, size, quantity } = req.body
       const { success, data, message } = await productService.createProduct({
-        name, color, size, quantity
+        name,
+        color,
+        size,
+        quantity
       })
       return res.status(200).json({
-        success, data, message
+        success,
+        data,
+        message
       })
     } catch (error) {
-      next(error);
+      next(error)
     }
   },
   updateProduct: async (req, res, next) => {
@@ -26,10 +31,15 @@ module.exports = {
       const id = req.params.id
       const { name, color, size, quantity } = req.body
       const { success, message } = await productService.updateProduct({
-        id, name, color, size, quantity
+        id,
+        name,
+        color,
+        size,
+        quantity
       })
       return res.status(200).json({
-        success, message
+        success,
+        message
       })
     } catch (error) {
       next(error)
@@ -40,8 +50,9 @@ module.exports = {
       const id = req.params.id
       const { success, message } = await productService.deleteProduct({ id })
       return res.status(200).json({
-        success, message
-      });
+        success,
+        message
+      })
     } catch (error) {
       next(error)
     }
@@ -50,20 +61,24 @@ module.exports = {
     try {
       const name = req.query.name
       return res.status(200).json({
-        data: await productService.getProduct({ name }),
-      });
+        data: await productService.getProduct({ name })
+      })
     } catch (error) {
       next(error)
     }
   },
   getAllProductPaginate: async (req, res, next) => {
     try {
-      console.log(req.query);
-      const activePage = +req.query.activePage || 1;
-      const limit = +req.query.limit || 5;
-      const { listProduct, totalPage, skip } = await productService.getAllProductPaginate({ activePage, limit })
+      console.log(req.query)
+      const activePage = +req.query.activePage || 1
+      const limit = +req.query.limit || 5
+      const { listProduct, totalPage, skip } =
+        await productService.getAllProductPaginate({ activePage, limit })
       return res.status(200).json({
-        data: listProduct, activePage, totalPage, skip
+        data: listProduct,
+        activePage,
+        totalPage,
+        skip
       })
     } catch (error) {
       next(error)
@@ -72,11 +87,19 @@ module.exports = {
   getProductPaginate: async (req, res, next) => {
     try {
       const textSearch = req.query.textSearch
-      const activePage = +req.query.activePage || 1;
-      const limit = +req.query.limit || 5;
-      const { listProduct, totalPage, skip } = await productService.getProductPaginate({textSearch, activePage, limit })
+      const activePage = +req.query.activePage || 1
+      const limit = +req.query.limit || 5
+      const { listProduct, totalPage, skip } =
+        await productService.getProductPaginate({
+          textSearch,
+          activePage,
+          limit
+        })
       return res.status(200).json({
-        data: listProduct, activePage, totalPage, skip
+        data: listProduct,
+        activePage,
+        totalPage,
+        skip
       })
     } catch (error) {
       next(error)
