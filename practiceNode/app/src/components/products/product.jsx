@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, Form, Modal, Pagination, Row, Table } from 'react-bootstrap';
-import { UseProduct } from "../../hooks";
+import {
+  Button,
+  Col,
+  Form,
+  Modal,
+  Pagination,
+  Row,
+  Table
+} from 'react-bootstrap';
+import { UseProduct } from '../../hooks';
 
 export default function StudentComponent() {
   const {
     paginateProduct,
-    totalPage, activePage,
+    totalPage,
+    activePage,
     handleAddProduct,
     handleUpdateProduct,
     handleDeleteProduct,
@@ -13,39 +22,50 @@ export default function StudentComponent() {
     handlePaginateProduct,
     handleSearchPaginateProduct
   } = UseProduct();
+
   useEffect(() => {
     document.title = 'CRUD PAGES';
-    handlePaginateProduct({ activePage: 1 })
+    handlePaginateProduct({ activePage: 1 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [nameSearch, setNameSearch] = useState('')
-  let listButton = []
+
+  const [nameSearch, setNameSearch] = useState('');
+  let listButton = [];
   for (let number = 1; number <= totalPage; number++) {
     listButton.push(
-      <Pagination.Item key={number} active={number === activePage}
+      <Pagination.Item
+        key={number}
+        active={number === activePage}
         onClick={() => {
-          nameSearch !== '' ? handleSearchPaginateProduct({
-            name: nameSearch, activePage: number
-          }) : handlePaginateProduct({ activePage: number })
-        }} >
+          nameSearch !== ''
+            ? handleSearchPaginateProduct({
+                name: nameSearch,
+                activePage: number
+              })
+            : handlePaginateProduct({ activePage: number });
+        }}
+      >
         {number}
       </Pagination.Item>
     );
   }
   const [product, setProduct] = useState({
-    id: '', name: '', color: 'white', size: 1, quantity: 1
-  })
-
-  const onChangeName = (e) => {
+    id: '',
+    name: '',
+    color: 'white',
+    size: 1,
+    quantity: 1
+  });
+  const onChangeName = e => {
     setProduct({ ...product, name: e.target.value });
   };
-  const onChangeColor = (e) => {
+  const onChangeColor = e => {
     setProduct({ ...product, color: e.target.value });
   };
-  const onChangeSize = (e) => {
+  const onChangeSize = e => {
     setProduct({ ...product, size: e.target.value });
   };
-  const onChangeQuantity = (e) => {
+  const onChangeQuantity = e => {
     setProduct({ ...product, quantity: e.target.value });
   };
   const [showEdit, setShowEdit] = useState(false);
@@ -61,38 +81,41 @@ export default function StudentComponent() {
         <Form>
           <Form.Group controlId="name">
             <Form.Label>Name:</Form.Label>
-            <Form.Control size='sm'
+            <Form.Control
+              size="sm"
               type="text"
               placeholder="Enter the Product Name"
-              onChange={(e) => onChangeName(e)}
+              onChange={e => onChangeName(e)}
             />
           </Form.Group>
           <Form.Group controlId="color">
             <Form.Label>Color:</Form.Label>
-            <Form.Control size='sm'
+            <Form.Control
+              size="sm"
               type="text"
               placeholder="Enter the Product Color"
-              onChange={(e) => onChangeColor(e)}
+              onChange={e => onChangeColor(e)}
             />
           </Form.Group>
           <Form.Group controlId="size">
             <Form.Label>Size:</Form.Label>
-            <Form.Control size='sm'
+            <Form.Control
+              size="sm"
               type="number"
               placeholder="Enter the Product Size"
-              onChange={(e) => onChangeSize(e)}
+              onChange={e => onChangeSize(e)}
             />
           </Form.Group>
           <Form.Group controlId="quantity">
             <Form.Label>Quantity:</Form.Label>
-            <Form.Control size='sm'
+            <Form.Control
+              size="sm"
               type="number"
               placeholder="Enter the Product Quantity"
-              onChange={(e) => onChangeQuantity(e)}
+              onChange={e => onChangeQuantity(e)}
             />
           </Form.Group>
-          <Button variant="primary" onClick={() =>
-            handleAddProduct(product)}>
+          <Button variant="primary" onClick={() => handleAddProduct(product)}>
             Add
           </Button>
         </Form>
@@ -100,22 +123,27 @@ export default function StudentComponent() {
         <Form>
           <Form.Group controlId="name">
             <Form.Label>Filter:</Form.Label>
-            <Form.Control size='sm'
+            <Form.Control
+              size="sm"
               type="text"
               placeholder="Filter by Product Name"
               value={nameSearch}
-              onChange={(e) => {
-                setNameSearch(e.target.value)
+              onChange={e => {
+                setNameSearch(e.target.value);
                 handleSearchPaginateProduct({
-                  name: e.target.value, activePage: 1
-                })
+                  name: e.target.value,
+                  activePage: 1
+                });
               }}
             />
           </Form.Group>
-          <Button variant="info" onClick={() => {
-            setNameSearch('')
-            handlePaginateProduct({ activePage: 1 })
-          }}>
+          <Button
+            variant="info"
+            onClick={() => {
+              setNameSearch('');
+              handlePaginateProduct({ activePage: 1 });
+            }}
+          >
             Clear Filter
           </Button>
         </Form>
@@ -123,7 +151,7 @@ export default function StudentComponent() {
       <Col className="col-8">
         {/* List product */}
         <h3>List</h3>
-        <Table striped bordered hover responsive size='small'>
+        <Table striped bordered hover responsive size="small">
           <thead>
             <tr>
               <th>Name</th>
@@ -136,7 +164,7 @@ export default function StudentComponent() {
           <tbody>
             {!paginateProduct.length ? (
               <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
+                <td colSpan="5" style={{ textAlign: 'center' }}>
                   No paginateProduct here.
                 </td>
               </tr>
@@ -148,7 +176,8 @@ export default function StudentComponent() {
                   <td>{item.size}</td>
                   <td>{item.quantity}</td>
                   <td colSpan="2">
-                    <Button size='sm'
+                    <Button
+                      size="sm"
                       variant="secondary"
                       onClick={() => {
                         handleEditShow();
@@ -156,12 +185,13 @@ export default function StudentComponent() {
                       }}
                     >
                       Edit
-                    </Button>{" "}
-                    {" | "}
-                    <Button size='sm'
+                    </Button>{' '}
+                    {' | '}
+                    <Button
+                      size="sm"
                       variant="danger"
                       onClick={() => {
-                        handleDeleteShow()
+                        handleDeleteShow();
                         setProduct(item);
                       }}
                     >
@@ -172,9 +202,10 @@ export default function StudentComponent() {
               ))
             )}
           </tbody>
-        </Table >
-        <Pagination className='d-flex justify-content-center'>
-          {listButton}</Pagination>
+        </Table>
+        <Pagination className="d-flex justify-content-center">
+          {listButton}
+        </Pagination>
 
         {/* Edit modal */}
         <Modal show={showEdit} onHide={handleEditClose}>
@@ -189,7 +220,7 @@ export default function StudentComponent() {
                   type="text"
                   placeholder="Enter the Product Name"
                   value={product.name}
-                  onChange={(e) => onChangeName(e)}
+                  onChange={e => onChangeName(e)}
                 />
               </Form.Group>
               <Form.Group controlId="color">
@@ -198,7 +229,7 @@ export default function StudentComponent() {
                   type="text"
                   placeholder="Enter the Product Color"
                   defaultValue={product.color}
-                  onChange={(e) => onChangeColor(e)}
+                  onChange={e => onChangeColor(e)}
                 />
               </Form.Group>
               <Form.Group controlId="size">
@@ -207,7 +238,7 @@ export default function StudentComponent() {
                   type="number"
                   placeholder="Enter the Product Size"
                   defaultValue={product.size}
-                  onChange={(e) => onChangeSize(e)}
+                  onChange={e => onChangeSize(e)}
                 />
               </Form.Group>
               <Form.Group controlId="quantity">
@@ -216,7 +247,7 @@ export default function StudentComponent() {
                   type="number"
                   placeholder="Enter the Product Quantity"
                   defaultValue={product.quantity}
-                  onChange={(e) => onChangeQuantity(e)}
+                  onChange={e => onChangeQuantity(e)}
                 />
               </Form.Group>
             </Form>
@@ -228,8 +259,8 @@ export default function StudentComponent() {
             <Button
               variant="primary"
               onClick={() => {
-                handleUpdateProduct(product)
-                handleEditClose()
+                handleUpdateProduct(product);
+                handleEditClose();
               }}
             >
               Save Changes
@@ -255,8 +286,8 @@ export default function StudentComponent() {
             <Button
               variant="primary"
               onClick={() => {
-                handleDeleteProduct(product._id)
-                handleDeleteClose()
+                handleDeleteProduct(product._id);
+                handleDeleteClose();
               }}
             >
               Yes, Do it.
@@ -265,5 +296,5 @@ export default function StudentComponent() {
         </Modal>
       </Col>
     </Row>
-  )
+  );
 }
