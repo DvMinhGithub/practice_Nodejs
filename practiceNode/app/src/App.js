@@ -1,19 +1,21 @@
-import { Container } from 'react-bootstrap';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/login/login';
 import { publicRoutes } from './routes';
+const token = localStorage.getItem('token')
+
 function App() {
+  console.log(token);
+  console.log(token !== undefined ? 'true' : 'false');
   return (
-    <Container className="p-3">
-      <Router>
-        <Routes>
-          {publicRoutes.map((route, index) => {
-            return (
-              <Route path={route.path} key={index} element={route.element} />
-            );
-          })}
-        </Routes>
-      </Router>
-    </Container>
+    <Router>
+      <Routes>
+        {publicRoutes.map((route, index) => (
+          <Route path={route.path} key={index}
+            element={token ? route.element : <LoginPage />} />
+        ))}
+      </Routes>
+    </Router>
   );
 }
 export default App;
