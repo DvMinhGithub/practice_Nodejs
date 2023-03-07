@@ -69,7 +69,6 @@ module.exports = {
   },
   getAllProductPaginate: async (req, res, next) => {
     try {
-      console.log(req.query)
       const activePage = +req.query.activePage || 1
       const limit = +req.query.limit || 5
       const { listProduct, totalPage, skip } =
