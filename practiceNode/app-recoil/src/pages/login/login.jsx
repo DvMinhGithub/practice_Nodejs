@@ -1,82 +1,107 @@
-// import {
-//   MDBBtn, MDBCard, MDBCheckbox, MDBContainer, MDBInput, MDBTabs, MDBTabsContent, MDBTabsItem,
-//   MDBTabsLink, MDBTabsPane
-// } from 'mdb-react-ui-kit';
-// import { useState } from 'react';
-// import { Container } from 'react-bootstrap';
-// import UseAuth from '../../hooks/UseAuth';
+import { Tabs } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Input } from 'antd';
+import { loadingState } from '../../recoil/store/app';
+import { useSetRecoilState } from 'recoil';
+import { useRef } from 'react';
+import callApi from '../../config/axios';
+import { STORE } from '../../contants';
+import { accessTokenState } from '../../recoil/store/account';
+import { showNotification } from '../../utils'
 
-// const LoginPage = () => {
-//   const [justifyActive, setJustifyActive] = useState('tab1');
-//   const [account, setAccount] = useState({})
-//   const {
-//     handleLogin
-//   } = UseAuth()
+const LoginPage = () => {
+  const setPageLoading = useSetRecoilState(loadingState);
+  const setAccessToken = useSetRecoilState(accessTokenState);
 
-//   const handleJustifyClick = (value) => {
-//     if (value === justifyActive) {
-//       return;
-//     }
-//     setJustifyActive(value);
-//   };
-//   const handleChange = (e) => {
-//     const { value, name } = e.target
-//     setAccount(preAccount => ({
-//       ...preAccount, [name]: value
-//     }))
-//   }
-//   return (
-//     <Container className="p-3" style={{ backgroundColor: "F5F5F5" }}>
-//       <MDBContainer className="p-3 my-5 d-flex flex-column w-75 ">
-//         <MDBCard className='p-5'>
-//           <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
-//             <MDBTabsItem>
-//               <MDBTabsLink onClick={() => handleJustifyClick('tab1')} active={justifyActive === 'tab1'}>
-//                 Login
-//               </MDBTabsLink>
-//             </MDBTabsItem>
-//             <MDBTabsItem>
-//               <MDBTabsLink onClick={() => handleJustifyClick('tab2')} active={justifyActive === 'tab2'}>
-//                 Register
-//               </MDBTabsLink>
-//             </MDBTabsItem>
-//           </MDBTabs>
+  const usernameRef = useRef()
+  const passwordRef = useRef()
+  const handleLogin = () => {
+    const username = usernameRef.current.input.value
+    const password = passwordRef.current.input.value
+    const url = `${STORE.authUrl}/login`
+    setPageLoading(true)
+    callApi('post', url, { username, password })
+      .then(res => {
+        if (res.success) {
+          setAccessToken(res.token);
+          showNotification('success', res.message);
+        }
+        setPageLoading(false);
+      })
+      .catch((error) => {
+        showNotification('error', error.message);
+        setPageLoading(false);
+      });
+  }
+  const items = [
+    {
+      key: '1',
+      label: `Sign in`,
+      children: <Form>
+        <Form.Item
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Username!",
+            },
+          ]}>
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Username" ref={usernameRef}
+          />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Password!",
+            },
+          ]}>
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password" ref={passwordRef}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Form.Item name="remember" valuePropName="checked" noStyle>
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
 
-//           <MDBTabsContent>
-//             {/* Login Tab */}
-//             <MDBTabsPane show={justifyActive === 'tab1'}>
-//               <div className="text-center mb-3">
-//                 <h1>Sign in</h1>
-//               </div>
-//               <MDBInput wrapperClass='mb-4' label='Username' type='text' name='username' onChange={handleChange} />
-//               <MDBInput wrapperClass='mb-4' label='Password' type='password' name='password' onChange={handleChange} />
-//               <div className="d-flex justify-content-between mx-4 mb-4">
-//                 <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
-//                 <a href="#!">Forgot password?</a>
-//               </div>
-//               <MDBBtn className="mb-4 w-100" onClick={()=> handleLogin(account)}>Sign in</MDBBtn>
-//               <p className="text-center">Not a member?
-//                 <a href="#!">Register</a></p>
-//             </MDBTabsPane>
+          <a className="login-form-forgot" href="#!" style={{ float: "right" }}>
+            Forgot password
+          </a>
+        </Form.Item>
 
-//             {/* Register Tab */}
-//             <MDBTabsPane show={justifyActive === 'tab2'}>
-//               <div className="text-center mb-3">
-//                 <h1>Sign up</h1>
-//               </div>
-//               <MDBInput wrapperClass='mb-4' label='Name' type='text' />
-//               <MDBInput wrapperClass='mb-4' label='Username' type='text' />
-//               <MDBInput wrapperClass='mb-4' label='Email' type='email' />
-//               <MDBInput wrapperClass='mb-4' label='Password' type='password' />
-//               <div className='d-flex justify-content-center mb-4'>
-//                 <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
-//               </div>
-//               <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
-//             </MDBTabsPane>
-//           </MDBTabsContent>
-//         </MDBCard>
-//       </MDBContainer >
-//     </Container >
-//   );
-// }
-// export default LoginPage;
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+            style={{ width: "100%" }}
+            onClick={() => handleLogin()}>
+            Log in
+          </Button>
+          Or <a href="#!">register now!</a>
+        </Form.Item>
+      </Form>
+    },
+    {
+      key: '2',
+      label: `Sign up`,
+      children: `Content of Tab Pane 2`,
+    },
+  ];
+  return (
+    <>
+      <div style={{ "maxWidth": "360px", "margin": "auto", "padding": "42px 24px 50px" }}>
+        <Tabs defaultActiveKey="1" centered items={items} >
+        </Tabs>
+      </div>
+    </>
+  )
+}
+
+export default LoginPage

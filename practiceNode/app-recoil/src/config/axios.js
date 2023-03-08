@@ -14,7 +14,7 @@ export default function callApi(method, url, data, params) {
         resolve(response.data)
       })
       .catch(error => {
-        reject(error)
+        reject(error.response.data)
       })
   })
 }
