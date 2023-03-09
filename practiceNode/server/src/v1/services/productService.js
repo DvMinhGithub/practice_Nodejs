@@ -1,26 +1,35 @@
 const _Product = require('../models/ProductModel')
 module.exports = {
-  getAllProduct: async () => {
+  getAllProduct: async ({ users }) => {
     try {
-      const allProducts = await _Product.find({})
-      return allProducts
+      // const allProducts = await _Product.find({})
+      const allProducts = await _Product.find({ users: users }).populate('users', 'username')
+      return { success: true, allProducts }
     } catch (error) {
       console.log(error)
     }
   },
-  createProduct: async ({ name, color, size, quantity }) => {
+  createProduct: async ({ name, color, size, quantity, users }) => {
     try {
+      const checkProduct = await _Product.findOne({ name: name })
+      if (checkProduct)
+        return {
+          message: 'Product already exists',
+          code: 404,
+        }
       const product = _Product({
         name,
         color,
         size,
-        quantity
+        quantity,
+        users
       })
       await product.save()
       return {
         success: true,
-        data: product,
-        message: 'Add Product successfully'
+        message: 'Add Product successfully',
+        code: 200,
+        data: product
       }
     } catch (error) {
       console.error(error)
@@ -69,6 +78,7 @@ module.exports = {
         .skip(skip)
         .limit(limit)
       return {
+        success: true,
         listProduct,
         totalPage,
         skip

@@ -25,7 +25,7 @@ module.exports = {
         }
       }
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-      return { code: 200, message: 'Logged in successfully', success: true, token };
+      return { success: true, message: 'Logged in successfully', code: 200, token, userId: user._id }; 
     } catch (error) {
       console.error(error);
     }

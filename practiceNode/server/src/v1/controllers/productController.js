@@ -3,24 +3,26 @@ const productService = require('../services/productService')
 
 module.exports = {
   getAllProduct: async (req, res, next) => {
-    const allProducts = await productService.getAllProduct()
+    const users = req.params.id
+    const { success, allProducts } = await productService.getAllProduct({ users })
     return res.status(200).json({
-      allProducts
+      success, data: allProducts
     })
   },
   createProduct: async (req, res, next) => {
     try {
-      const { name, color, size, quantity } = req.body
-      const { success, data, message } = await productService.createProduct({
+      const { name, color, size, quantity, users } = req.body
+      const { success, message, code, data } = await productService.createProduct({
         name,
         color,
         size,
-        quantity
+        quantity,
+        users
       })
-      return res.status(200).json({
+      return res.status(code).json({
         success,
-        data,
-        message
+        message,
+        data
       })
     } catch (error) {
       next(error)
@@ -71,9 +73,10 @@ module.exports = {
     try {
       const activePage = +req.query.activePage || 1
       const limit = +req.query.limit || 5
-      const { listProduct, totalPage, skip } =
+      const { success, listProduct, totalPage, skip } =
         await productService.getAllProductPaginate({ activePage, limit })
       return res.status(200).json({
+        success,
         data: listProduct,
         activePage,
         totalPage,
