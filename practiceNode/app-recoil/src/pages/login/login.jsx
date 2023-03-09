@@ -1,20 +1,30 @@
-import { Tabs } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
-import { loadingState } from '../../recoil/store/app';
-import { useSetRecoilState } from 'recoil';
+import { Button, Checkbox, Form, Input, Tabs } from 'antd';
 import { useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 import callApi from '../../config/axios';
 import { STORE } from '../../contants';
-import { accessTokenState } from '../../recoil/store/account';
-import { showNotification } from '../../utils'
+import { accessTokenState, accountIdState } from '../../recoil/store/account';
+import { loadingState } from '../../recoil/store/app';
+import { showNotification } from '../../utils';
 
 const LoginPage = () => {
   const setPageLoading = useSetRecoilState(loadingState);
   const setAccessToken = useSetRecoilState(accessTokenState);
+  const setAccountId = useSetRecoilState(accountIdState);
 
   const usernameRef = useRef()
   const passwordRef = useRef()
+
+  // const hanldeGetUser = () => {
+  //   const storedUsername = localStorage.getItem("username");
+  //   const storedPassword = localStorage.getItem("password");
+
+  //   if (storedUsername && storedPassword) {
+  //     setUserLogin({ username: storedUsername, password: storedPassword })
+  //   }
+  // }
+
   const handleLogin = () => {
     const username = usernameRef.current.input.value
     const password = passwordRef.current.input.value
@@ -24,6 +34,7 @@ const LoginPage = () => {
       .then(res => {
         if (res.success) {
           setAccessToken(res.token);
+          setAccountId(res.userId)
           showNotification('success', res.message);
         }
         setPageLoading(false);
@@ -33,6 +44,11 @@ const LoginPage = () => {
         setPageLoading(false);
       });
   }
+
+  // const hanldeSave = () => {
+  //   const storedUsername = localStorage.getItem("username");
+  //   const storedPassword = localStorage.getItem("password");
+  // }
   const items = [
     {
       key: '1',
@@ -46,7 +62,7 @@ const LoginPage = () => {
               message: "Please input your Username!",
             },
           ]}>
-          <Input
+          <Input id='username'
             prefix={<UserOutlined className="site-form-item-icon" />}
             placeholder="Username" ref={usernameRef}
           />
@@ -67,7 +83,7 @@ const LoginPage = () => {
         </Form.Item>
         <Form.Item>
           <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
+            <Checkbox >Remember me</Checkbox>
           </Form.Item>
 
           <a className="login-form-forgot" href="#!" style={{ float: "right" }}>
@@ -84,6 +100,7 @@ const LoginPage = () => {
             onClick={() => handleLogin()}>
             Log in
           </Button>
+          {/* <Button onClick={hanldeGetUser()}>get</Button> */}
           Or <a href="#!">register now!</a>
         </Form.Item>
       </Form>

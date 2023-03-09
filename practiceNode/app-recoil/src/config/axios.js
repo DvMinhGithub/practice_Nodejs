@@ -14,6 +14,7 @@ export default function callApi(method, url, data, params) {
         resolve(response.data)
       })
       .catch(error => {
+        console.log("file: axios.js:20 ~ error", error);
         reject(error.response.data)
       })
   })
